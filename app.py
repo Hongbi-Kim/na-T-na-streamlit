@@ -136,38 +136,40 @@ if st.session_state.started:
         # st.session_state.conversation.append(user_input)
 
         # 챗봇 응답 처리
-        with st.chat_message(st.session_state.chatbot_name):
-            with st.spinner(f"{st.session_state.chatbot_name}가 생각 중이에요..."):
- 
-                res = requests.post(f"{API_BASE}/conversation", json=payload)
+        # with st.chat_message(st.session_state.chatbot_name):
+        with st.spinner(f"{st.session_state.chatbot_name}가 생각 중이에요..."):
 
-                if res.status_code == 200:
-                    data = res.json()
+            res = requests.post(f"{API_BASE}/conversation", json=payload)
 
-                    if not data.get("verification", False):
-                        st.warning("❗ 이상한 말 하지 마세요.")
+        if res.status_code == 200:
+            data = res.json()
 
-                        time.sleep(5)
-                        # st.session_state.conversation.pop()
+            if not data.get("verification", False):
+                st.warning("❗ 이상한 말 하지 마세요. 다시 대답하세요!!!")
+                st.session_state.conversation.pop()
+                time.sleep(5)
+
+                st.stop()
+                
+            else:
+                with st.chat_message(st.session_state.chatbot_name):
+                    # 성공적인 응답 처리
+                    react = data.get('react', '')
+                    improved_quiz = data.get('improved_quiz', '')
+                    score = data.get('score',0)
+                    next_message = f"{react} {improved_quiz}".strip()
                     
-                    else:
-                        # 성공적인 응답 처리
-                        react = data.get('react', '')
-                        improved_quiz = data.get('improved_quiz', '')
-                        score = data.get('score',0)
-                        next_message = f"{react} {improved_quiz}".strip()
-                        
-                        # print(react, score)
-                        st.session_state.conversation.append(next_message)
+                    # print(react, score)
+                    st.session_state.conversation.append(next_message)
 
-                        # 퀴즈 업데이트 및 인덱스 증가
-                        st.session_state.current_idx += 1
-                        # st.session_state.quiz_list[st.session_state.current_idx] = data.get('improved_quiz', '')
-                        st.session_state.current_distance = st.session_state.current_distance - (score)
-                        print(f"점수: {score}, 현재 거리: {st.session_state.current_distance}")
-                        # 다음 질문이 있으면 quiz_list 업데이트
-                        if st.session_state.current_idx < len(st.session_state.quiz_list):
-                            st.session_state.quiz_list[st.session_state.current_idx] = improved_quiz
+                    # 퀴즈 업데이트 및 인덱스 증가
+                    st.session_state.current_idx += 1
+                    # st.session_state.quiz_list[st.session_state.current_idx] = data.get('improved_quiz', '')
+                    st.session_state.current_distance = st.session_state.current_distance - (score)
+                    print(f"점수: {score}, 현재 거리: {st.session_state.current_distance}")
+                    # 다음 질문이 있으면 quiz_list 업데이트
+                    if st.session_state.current_idx < len(st.session_state.quiz_list):
+                        st.session_state.quiz_list[st.session_state.current_idx] = improved_quiz
 
         st.rerun()
     if (
