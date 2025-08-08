@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import time
 
 try:
     API_BASE = st.secrets["api"]["base"]
@@ -144,6 +145,7 @@ if st.session_state.started:
 
                     if not data.get("verification", False):
                         st.warning("❗ 이상한 말 하지 마세요.")
+                        time.spleep(5)
                         st.session_state.conversation.pop()
                     
                     else:
