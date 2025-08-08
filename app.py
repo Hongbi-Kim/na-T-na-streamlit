@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import time
+import base64
 
 try:
     API_BASE = st.secrets["api"]["base"]
@@ -22,7 +23,7 @@ def initialize_session():
     if "current_idx" not in st.session_state:
         st.session_state.current_idx = 0
     if "current_distance" not in st.session_state:
-        st.session_state.current_distance = 10  # 초기 거리값
+        st.session_state.current_distance = 5  # 초기 거리값
     # 피드백 내용을 저장할 상태 변수 추가
     if "feedback" not in st.session_state:
         st.session_state.feedback = None
@@ -146,7 +147,7 @@ if st.session_state.started:
                     if not data.get("verification", False):
                         st.warning("❗ 이상한 말 하지 마세요.")
                         time.spleep(5)
-                        st.session_state.conversation.pop()
+                        # st.session_state.conversation.pop()
                     
                     else:
                         # 성공적인 응답 처리
@@ -184,10 +185,13 @@ if st.session_state.started:
                 feedback_output = fb_res.json()
                 feedback_text = feedback_output['feedback']
                 last_greeting = feedback_output['last_greeting']
+                audio_base64 = feedback_output['audio_base64']
                 # print(feedback_output)
 
                 full_feedback = f"📨안녕 {st.session_state.user_nickname}!\n\n{feedback_text}\n\n{last_greeting}\n\n-{st.session_state.chatbot_name}-"
                 st.session_state.feedback = full_feedback
+                st.session_state.audio_base64 = audio_base64
+
                 st.rerun()
 
     # 저장된 피드백이 있으면 표시
@@ -196,6 +200,11 @@ if st.session_state.started:
         feedback_length = len(st.session_state.feedback)
         st.markdown(f"전체 편지 길이: {feedback_length}")
         st.info(st.session_state.feedback)
+
+        # 🎵 오디오 재생 추가
+        if "audio_base64" in st.session_state and st.session_state.audio_base64:
+            audio_bytes = base64.b64decode(st.session_state.audio_base64)
+            st.audio(audio_bytes, format="audio/mp3")
 
 if __name__ == "__main__":
     import subprocess
