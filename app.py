@@ -184,7 +184,7 @@ if st.session_state.started:
                 last_greeting = feedback_output['last_greeting']
                 # print(feedback_output)
 
-                full_feedback = f"📨안녕 {st.session_state.user_nickname}!\n\n{feedback_text}\n\n{last_greeting}\n\n삐롱이가"
+                full_feedback = f"📨안녕 {st.session_state.user_nickname}!\n\n{feedback_text}\n\n{last_greeting}\n\n-{st.session_state.chatbot_name}-"
                 st.session_state.feedback = full_feedback
                 st.rerun()
 
