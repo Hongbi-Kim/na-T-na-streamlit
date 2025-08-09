@@ -20,7 +20,7 @@ def initialize_session():
     if "chatbot_name" not in st.session_state:
         st.session_state.chatbot_name = "투닥이"
     if "chatroom_id" not in st.session_state:
-        st.session_state.chatbot_name = uuid.uuid4().hex[:8]
+        st.session_state.chatroom_id = uuid.uuid4().hex[:8]
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
     if "current_idx" not in st.session_state:
