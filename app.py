@@ -8,6 +8,7 @@ try:
     API_BASE = st.secrets["api"]["base"]
 except:
     API_BASE = "http://localhost:8000"
+# API_BASE = "http://localhost:8001"
 
 # --- 세션 상태 초기화 ---
 def initialize_session():
@@ -211,8 +212,7 @@ if st.session_state.started:
         st.info(st.session_state.feedback)
 
         # 🎵 오디오 재생 추가
-        if "audio_base64" in st.session_state and st.session_state.audio_base64:
-            st.audio(audio_base64, format="audio/mp3")
+        st.audio(st.session_state.audio_base64, format="audio/mp3")
 
 if __name__ == "__main__":
     import subprocess
