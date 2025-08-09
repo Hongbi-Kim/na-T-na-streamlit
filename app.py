@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import time
 import base64
+import uuid
 
 try:
     API_BASE = st.secrets["api"]["base"]
@@ -18,6 +19,8 @@ def initialize_session():
         st.session_state.user_nickname = ""
     if "chatbot_name" not in st.session_state:
         st.session_state.chatbot_name = "투닥이"
+    if "chatroom_id" not in st.session_state:
+        st.session_state.chatbot_name = uuid.uuid4().hex[:8]
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
     if "current_idx" not in st.session_state:
@@ -58,7 +61,8 @@ if not st.session_state.started:
         with st.spinner("상황을 준비 중입니다..."):
             payload = {
                 "user_nickname": st.session_state.user_nickname,
-                "chatbot_name": st.session_state.chatbot_name
+                "chatbot_name": st.session_state.chatbot_name,
+                "chatroom_id": st.session_state.chatroom_id
             }
 
             try:
@@ -129,7 +133,8 @@ if st.session_state.started:
             "chatbot_name": st.session_state.chatbot_name,
             "conversation": st.session_state.conversation,
             "quiz_list": st.session_state.quiz_list,
-            "current_distance": st.session_state.current_distance
+            "current_distance": st.session_state.current_distance,
+            "chatroom_id": st.session_state.chatroom_id
         }
 
         # 사용자 메시지 추가
@@ -181,7 +186,8 @@ if st.session_state.started:
                 "user_nickname": st.session_state.user_nickname,
                 "chatbot_name": st.session_state.chatbot_name,
                 "conversation": st.session_state.conversation,
-                "current_distance": st.session_state.current_distance
+                "current_distance": st.session_state.current_distance,
+                "chatroom_id": st.session_state.chatroom_id
             }
             fb_res = requests.post(f"{API_BASE}/feedback", json=fb_payload)
             if fb_res.status_code == 200:
