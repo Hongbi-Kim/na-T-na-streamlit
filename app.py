@@ -212,8 +212,7 @@ if st.session_state.started:
 
         # 🎵 오디오 재생 추가
         if "audio_base64" in st.session_state and st.session_state.audio_base64:
-            audio_bytes = base64.b64decode(st.session_state.audio_base64)
-            st.audio(audio_bytes, format="audio/mp3")
+            st.audio(audio_base64, format="audio/mp3")
 
 if __name__ == "__main__":
     import subprocess
